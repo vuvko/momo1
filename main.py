@@ -31,8 +31,32 @@ def f2(x):
     return y, dy
 
 
-def f3(x):
-    return
+def g(b):
+    return np.sqrt(1 + b ** 2) - b
+
+
+def f3(x, b1, b2):
+    y = g(b1) * np.sqrt((1 - x) ** 2 + b2 ** 2) + g(b2) * np.sqrt(x ** 2 + b1 ** 2)
+    dy = (g(b1) * (x - 1)) / np.sqrt((1 - x) ** 2 + b2 ** 2) + (g(b2) * x) / np.sqrt(x ** 2 + b1 ** 2)
+    return y, dy
+
+
+def f3_1(x):
+    b1 = 0.001
+    b2 = 0.001
+    return f3(x, b1, b2)
+
+
+def f3_2(x):
+    b1 = 0.01
+    b2 = 0.001
+    return f3(x, b1, b2)
+
+
+def f3_3(x):
+    b1 = 0.001
+    b2 = 0.01
+    return f3(x, b1, b2)
 
 
 def f4(x):
@@ -47,14 +71,6 @@ def f5(x):
     return y, dy
 
 
-#def f(x):
-#    return - x / (x ** 2.0 + 2)
-#
-#
-#def df(x):
-#    return (x ** 2 - 2) / ((x ** 2 + 2) ** 2.0)
-
-
 def plot_func(func, a, b):
     x = np.arange(a, b, (b - a) / 100.0)
     Y = np.array([func(e) for e in x])
@@ -64,12 +80,12 @@ def plot_func(func, a, b):
 
 
 def main():
-    func = f5
-    alpha0 = 1
-    alpha_max = 3.5
+    func = f1
+    alpha0 = 0.5
+    alpha_max = 10
     plt.figure()
     plot_func(func, 0, alpha_max)
-    x_min, f_min, exitflag, num_oracle = min_wolfe(func, alpha0, c1=0.85, c2=0.91, alpha_max=alpha_max, display=1)
+    x_min, f_min, exitflag, num_oracle = min_wolfe(func, alpha0, c1=0.1, c2=0.21, alpha_max=alpha_max, display=1)
     print('Final result: x_min =', x_min, 'f_min =', f_min, 'exitflag =', exitflag, 'num_oracle =', num_oracle)
     plt.show()
 

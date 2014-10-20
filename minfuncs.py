@@ -52,10 +52,6 @@ def min_parabolic_step_2p(func, bounds, display=0):
     return x_min, f_min, 1
 
 
-def min_cubic_step(func, bounds, display=0):
-    return bounds, num_oracle
-
-
 def min_golden_step(func, bounds, display=0):
     k = (np.sqrt(5) - 1) / 2.0
     a, fa, b, fb, l, u, int_len = bounds
@@ -123,7 +119,7 @@ def wolfe_condition(f0, df0, a, fa, dfa, c1, c2):
 
 
 def min_wolfe(func, alpha0, c1=1e-4, c2=0.1, alpha_max=100, 
-  tol_interval=1e-8, max_iter=10, display=0):
+  tol_interval=1e-8, max_iter=500, display=0):
     eps = tol_interval
     k = (np.sqrt(5) - 1) / 2.0
     a = 0
@@ -151,11 +147,11 @@ def min_wolfe(func, alpha0, c1=1e-4, c2=0.1, alpha_max=100,
             print('Iteration #', k)
             print('  a =', a, 'b =', b, 'w =', w, 'v =', v)
             print('  x =', x, 'fx =', fx, 'dfx =', dfx)
-        if wolfe_flag == -1: 
-            print('  Going right')
+        if wolfe_flag == -1:
+            if display:
+                print('  Going right')
             # ищём правый край
             x = b * 2
-            #b = 2 * b
             if x > alpha_max:
                 alpha_min = b
                 phi_min = fb
@@ -172,13 +168,8 @@ def min_wolfe(func, alpha0, c1=1e-4, c2=0.1, alpha_max=100,
                 t, ft, dft = b, fb, dfb
                 b, fb, dfb = x, fx, dfx
                 x, fx, dfx = t, ft, dft
-        #elif wolfe_flag == 0 or wolfe_flag == 2: 
-        #if wolfe_flag != 1
-        #    # ищем точку, где выполняется первое условие Вольфа
-        #    print('  Now 1st')
-        #    
         else:
-            # ищем точку, где вдобавок выполняется второе условие Вольфа
+            # ищем точку, где выполняются условия Вольфа
             u1_flag = 0
             u2_flag = 0
             if x != v and dfx != dfv:
@@ -263,7 +254,7 @@ def min_wolfe(func, alpha0, c1=1e-4, c2=0.1, alpha_max=100,
             phi_min = fx
             exitflag = 0
             break
-        if int_len < eps:
+        if int_len < 2 * eps:
             alpha_min = x
             phi_min = fx
             exitflag = 1
